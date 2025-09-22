@@ -125,7 +125,7 @@ async def scrape_infinite_collect(url: str) -> List[Dict]:
         )
         page = await ctx.new_page()
         await page.goto(url, wait_until="domcontentloaded")
-        await page.wait_for_selector("article.kt-post-card", timeout=20000)
+        await page.wait_for_selector("article.kt-post-card", state="attached", timeout=20000)
 
         while True:
             html = await page.content()
@@ -221,8 +221,7 @@ application = Application.builder().token(TELEGRAM_TOKEN).build()
 
 async def start_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "👋 Hi!\nJust send me a Divar link (for example https://divar.ir/s/tehran/car) "
-        "and I’ll scrape it for you."
+        "لینک دیوار را ارسال کنید (مثال؛ https://divar.ir/s/tehran/car) "
     )
 
 
@@ -230,7 +229,7 @@ async def link_handler(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     text = update.message.text.strip()
     if "http" not in text:
         return
-    msg = await update.message.reply_text("Scraping… this may take a few minutes ⏳")
+    msg = await update.message.reply_text("درحال استخراج ، ممکن است چنددقیقه طول بکشد ⏳")
     try:
         rows = await scrape_infinite_collect(text)
         rows = remove_low_price_outliers(rows, LOW_OUTLIER_F)
@@ -242,7 +241,7 @@ async def link_handler(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_document(
                 document=tmp.name,
                 filename="cars.xlsx",
-                caption=f"Found {len(rows)} priced ads."
+                caption=f"پیدا شد {len(rows)} "
             )
     except Exception as e:
         await update.message.reply_text(f"❌ Failed: {e}")
