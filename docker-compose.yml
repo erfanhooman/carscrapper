@@ -1,0 +1,7 @@
+services:
+  divarbot:
+    build: .
+    container_name: divarbot
+    environment:
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+    restart: unless-stopped
