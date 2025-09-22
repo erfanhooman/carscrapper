@@ -6,7 +6,7 @@ from scraper import scrape_infinite_collect, remove_low_price_outliers, sort_by_
 
 TELEGRAM_TOKEN = os.environ["TELEGRAM_TOKEN"]
 
-application = Application.builder().token(TELEGRAM_TOKEN).build()
+application = Application.builder().token(TELEGRAM_TOKEN).http_version("1.1").build()
 
 async def start_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
