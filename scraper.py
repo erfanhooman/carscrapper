@@ -75,7 +75,7 @@ async def scrape_infinite_collect(url: str,
         ctx = await browser.new_context(viewport=viewport, locale="fa-IR")
         page = await ctx.new_page()
         await page.goto(url, wait_until="domcontentloaded")
-        await page.wait_for_selector("article.kt-post-card", timeout=20000)
+        await page.wait_for_selector("article.kt-post-card", state="attached", timeout=20000)
 
         while True:
             html = await page.content()
