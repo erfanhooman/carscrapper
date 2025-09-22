@@ -208,6 +208,16 @@ application.add_handler(CommandHandler("scrape", scrape_cmd))
 # ------------------- FastAPI webhook -------------------
 api = FastAPI()
 
+# ✅ NEW: initialize PTB on startup
+@api.on_event("startup")
+async def on_startup():
+    await application.initialize()
+
+# ✅ NEW: graceful shutdown
+@api.on_event("shutdown")
+async def on_shutdown():
+    await application.shutdown()
+
 @api.get("/healthz", response_class=PlainTextResponse)
 async def healthz():
     return "ok"
@@ -217,6 +227,6 @@ async def telegram_webhook(secret: str, request: Request):
     if secret != WEBHOOK_SECRET:
         raise HTTPException(status_code=403, detail="forbidden")
     data = await request.json()
-    update = Update.de_json(data, application.bot)
+    update = Update.de_json(data, application.bot)  # <- now bot is initialized
     await application.process_update(update)
     return {"ok": True}
